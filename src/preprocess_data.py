@@ -10,15 +10,22 @@ def fill_nulls(df):
     df['Embarked'].fillna(df['Embarked'].mode()[0], inplace=True)
 
 
+'''
+Add a column to the dataframe for column: key, with numeric values
+'''
+def to_numeric(df, key):
+    values = list(pd.get_dummies(df[key]).columns)
+    df[key+'_n'] = df[key].apply(lambda v: values.index(v))
+    return values
+
+
 def make_numeric(df):
     # convert sex into number
     df['Sex_n'] = df['Sex'].apply( \
         lambda s: int(s.lower().startswith('m')))
 
     # convert embarked into number and one-hot encoding
-    evs = list(pd.get_dummies(df['Embarked']).columns)
-    df['Embarked_n'] = df['Embarked'].apply( \
-        lambda e: evs.index(e))
+    evs = to_numeric(df, 'Embarked')
     df['IsEmb_C'] = df['Embarked_n'].apply( \
         lambda e: 1 if e == evs.index('C') else 0)
     df['IsEmb_Q'] = df['Embarked_n'].apply( \
@@ -60,7 +67,6 @@ def process_name(df):
     df['IsMaster'] = df['Title_n'].apply(lambda t: \
         1 if t == top_titles.index('Master') else 0)
 
-
     # remove (, ), and " characters
     df['Name'] = df['Name'].replace( \
         to_replace=['\(','\)','\"'], value='',
@@ -76,22 +82,30 @@ def process_name(df):
 
     # convert first name to number
     df['Firstname'] = df['Name'].str.split(' ', expand=True)[0]
-    names = list(pd.get_dummies(df['Firstname']).columns)
-    df['Firstname_n'] = df['Firstname'].apply( \
-        lambda n: names.index(n))
+    names = to_numeric(df, 'Firstname')
 
-    #print(df[['Title', 'Firstname_n', 'Num_names', 'FL_VC', 'Lastname', 'IsMr', 'IsMiss', 'IsMrs', 'IsMaster']].head())
+
+def process_cabin(df):
+    df['Num_cabins'] = df['Cabin'].str.split(' ', expand=True).count(axis=1)
+    df['CabinLetter'] = df['Cabin'].str[0]
+    cls = to_numeric(df, 'CabinLetter')
+
+
+def process_data(df):
+    # process the data and extract additional features
+    fill_nulls(df)
+    make_numeric(df)
+    process_name(df)
+    process_cabin(df)
 
 
 def main():
     td = read_data('train.csv')
 
-    # Fill nulls
-    fill_nulls(td)
-    make_numeric(td)
-    process_name(td)
+    process_data(td)
 
-    print(td.head())
+    # display correlations with Survived for numeric data
+    print(td.corr()['Survived'])
 
 
 if __name__=='__main__':
