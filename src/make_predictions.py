@@ -6,8 +6,9 @@ from preprocess_data import process_data, get_best_s_corr
 from sklearn import ensemble
 
 
+# Note: improve features to beat benchmark
 def main():
-    # read in training data and create a random split
+    # read in training and test data
     train = read_data('train.csv')
     test = read_data('test.csv')
 
@@ -23,11 +24,12 @@ def main():
     train_y = train['Survived']
     test_x = test[b_corr]
 
-    # predict with Gradient Boosting
-    gbc = ensemble.GradientBoostingClassifier()
-    gbc.fit(train_x, train_y)
-    test['Survived'] = gbc.predict(test_x)
+    # predict with Extra Trees
+    xtc = ensemble.ExtraTreesClassifier()
+    xtc.fit(train_x, train_y)
+    test['Survived'] = xtc.predict(test_x)
 
+    # save predictions to csv
     pred_fn = os.path.join('out','predictions.csv')
     test[['PassengerId','Survived']].to_csv(pred_fn, index=False)
 

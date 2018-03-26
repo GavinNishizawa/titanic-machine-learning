@@ -55,6 +55,14 @@ def main():
     print(metrics.classification_report(prs, test_y))
     print(metrics.accuracy_score(prs, test_y))
 
+    # test Extra Trees model
+    xtc = ensemble.ExtraTreesClassifier()
+    xtc.fit(train_x, train_y)
+    prs = xtc.predict(test_x)
+    print("Extra Trees results")
+    print(metrics.classification_report(prs, test_y))
+    print(metrics.accuracy_score(prs, test_y))
+
 
 if __name__=='__main__':
     main()
