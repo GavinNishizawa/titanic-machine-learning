@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os
 from read_data import read_data
 
 
@@ -105,7 +108,20 @@ def main():
     process_data(td)
 
     # display correlations with Survived for numeric data
-    print(td.corr()['Survived'])
+    s_corr = pd.DataFrame(td.corr()['Survived'])
+    print(s_corr)
+
+    # plot correlation heatmap with seaborn
+    sns.heatmap(s_corr, annot=True)
+    fn = os.path.join('out','survived_corr.png')
+    plt.savefig(fn, bbox_inches='tight')
+    plt.close()
+
+    # plot absolute correlation heatmap with seaborn
+    sns.heatmap(s_corr.abs(), annot=True)
+    fn = os.path.join('out','survived_corr_abs.png')
+    plt.savefig(fn, bbox_inches='tight')
+    plt.close()
 
 
 if __name__=='__main__':
