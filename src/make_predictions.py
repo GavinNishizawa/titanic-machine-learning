@@ -23,10 +23,10 @@ def main():
     train_y = train['Survived']
     test_x = test[b_corr]
 
-    # predict with Random Forest
-    rfc = ensemble.RandomForestClassifier()
-    rfc.fit(train_x, train_y)
-    test['Survived'] = rfc.predict(test_x)
+    # predict with Gradient Boosting
+    gbc = ensemble.GradientBoostingClassifier()
+    gbc.fit(train_x, train_y)
+    test['Survived'] = gbc.predict(test_x)
 
     pred_fn = os.path.join('out','predictions.csv')
     test[['PassengerId','Survived']].to_csv(pred_fn, index=False)

@@ -39,6 +39,23 @@ def main():
     print(metrics.classification_report(prs, test_y))
     print(metrics.accuracy_score(prs, test_y))
 
+    # test Ada Boost model
+    abc = ensemble.AdaBoostClassifier()
+    abc.fit(train_x, train_y)
+    prs = abc.predict(test_x)
+    print("Ada Boost results")
+    print(metrics.classification_report(prs, test_y))
+    print(metrics.accuracy_score(prs, test_y))
+
+    # test Gradient Boosting model
+    gbc = ensemble.GradientBoostingClassifier()
+    gbc.fit(train_x, train_y)
+    prs = gbc.predict(test_x)
+    print("Gradient Boosting results")
+    print(metrics.classification_report(prs, test_y))
+    print(metrics.accuracy_score(prs, test_y))
+
+
 if __name__=='__main__':
     main()
 
