@@ -9,6 +9,7 @@ from read_data import read_data
 def fill_nulls(df):
     # with age: median, cabin: 'UNKNOWN', Embarked: mode
     df['Age'].fillna(df['Age'].median(), inplace=True)
+    df['Fare'].fillna(df['Fare'].median(), inplace=True)
     df['Cabin'].fillna('UNKNOWN', inplace=True)
     df['Embarked'].fillna(df['Embarked'].mode()[0], inplace=True)
 
