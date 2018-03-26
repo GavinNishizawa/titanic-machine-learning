@@ -3,7 +3,7 @@ import os
 from read_data import read_data
 from split_data import split_data
 from preprocess_data import process_data, get_best_s_corr
-from sklearn import linear_model
+from sklearn import ensemble
 
 
 def main():
@@ -23,10 +23,10 @@ def main():
     train_y = train['Survived']
     test_x = test[b_corr]
 
-    # test Logistic Regression model
-    lrm = linear_model.LogisticRegressionCV()
-    lrm.fit(train_x, train_y)
-    test['Survived'] = lrm.predict(test_x)
+    # predict with Random Forest
+    rfc = ensemble.RandomForestClassifier()
+    rfc.fit(train_x, train_y)
+    test['Survived'] = rfc.predict(test_x)
 
     pred_fn = os.path.join('out','predictions.csv')
     test[['PassengerId','Survived']].to_csv(pred_fn, index=False)

@@ -2,7 +2,7 @@ import numpy as np
 from read_data import read_data
 from split_data import split_data
 from preprocess_data import process_data, get_best_s_corr
-from sklearn import linear_model, metrics
+from sklearn import linear_model, ensemble, metrics
 
 
 def main():
@@ -31,6 +31,13 @@ def main():
     print(metrics.classification_report(prs, test_y))
     print(metrics.accuracy_score(prs, test_y))
 
+    # test Random Forest model
+    rfc = ensemble.RandomForestClassifier()
+    rfc.fit(train_x, train_y)
+    prs = rfc.predict(test_x)
+    print("Random Forest results")
+    print(metrics.classification_report(prs, test_y))
+    print(metrics.accuracy_score(prs, test_y))
 
 if __name__=='__main__':
     main()
