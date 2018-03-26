@@ -102,26 +102,63 @@ def process_data(df):
     process_cabin(df)
 
 
-def main():
-    td = read_data('train.csv')
+# only return columns with absolute correlation > 0.10
+def get_best_s_corr(df):
+    sa_corr = pd.DataFrame(df.corr()['Survived']).abs()
+    b_corr_d = dict(sa_corr[sa_corr > 0.10]['Survived'])
 
-    process_data(td)
+    b_corrs = []
+    for k, v in b_corr_d.items():
+        if v > 0:
+            b_corrs.append(k)
 
-    # display correlations with Survived for numeric data
-    s_corr = pd.DataFrame(td.corr()['Survived'])
-    print(s_corr)
+    return b_corrs
 
+
+def make_plots(df):
     # plot correlation heatmap with seaborn
+    sns.heatmap(df.corr())
+    fn = os.path.join('out','gen_corr.png')
+    plt.savefig(fn, bbox_inches='tight')
+    plt.close()
+
+    # correlations with Survived for numeric data
+    s_corr = pd.DataFrame(df.corr()['Survived'])
+
+    # plot correlation heatmap
     sns.heatmap(s_corr, annot=True)
     fn = os.path.join('out','survived_corr.png')
     plt.savefig(fn, bbox_inches='tight')
     plt.close()
 
-    # plot absolute correlation heatmap with seaborn
+    # plot absolute correlation heatmap
     sns.heatmap(s_corr.abs(), annot=True)
     fn = os.path.join('out','survived_corr_abs.png')
     plt.savefig(fn, bbox_inches='tight')
     plt.close()
+
+    # best correlations
+    b_corr = get_best_s_corr(df)
+
+    # plot best correlation heatmap
+    sns.heatmap(s_corr.T[b_corr].T, annot=True)
+    fn = os.path.join('out','best_corr.png')
+    plt.savefig(fn, bbox_inches='tight')
+    plt.close()
+
+    # plot best absolute correlation heatmap
+    sns.heatmap(s_corr.T[b_corr].T.abs(), annot=True, vmin=0)
+    fn = os.path.join('out','best_corr_abs.png')
+    plt.savefig(fn, bbox_inches='tight')
+    plt.close()
+
+
+def main():
+    td = read_data('train.csv')
+
+    process_data(td)
+
+    make_plots(td)
 
 
 if __name__=='__main__':
